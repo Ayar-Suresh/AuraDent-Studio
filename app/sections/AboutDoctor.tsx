@@ -5,6 +5,8 @@ import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { Award, GraduationCap, Users, Clock } from "lucide-react";
 import Image from "next/image";
 
+const prefix = process.env.NODE_ENV === 'production' ? '/AuraDent-Studio' : '';
+
 const stats = [
   { icon: Clock, value: 15, suffix: "+", label: "Years Experience" },
   { icon: Users, value: 5000, suffix: "+", label: "Patients Treated" },
@@ -71,7 +73,7 @@ export default function AboutDoctor() {
               <div className="absolute inset-0 bg-gradient-to-br from-dental-500/10 to-purple-500/10 mix-blend-overlay z-10 pointer-events-none" />
 
               <Image
-                src="/images/doctor.png"
+                src={`${prefix}/images/doctor.png`}
                 alt="Dr. Sarah Mitchell"
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105"

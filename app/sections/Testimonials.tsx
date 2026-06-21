@@ -7,13 +7,15 @@ import Autoplay from "embla-carousel-autoplay";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
+const prefix = process.env.NODE_ENV === 'production' ? '/AuraDent-Studio' : '';
+
 const testimonials = [
   {
     name: "Jennifer Walsh",
     role: "Smile Design Patient",
     content: "I was terrified of dentists my whole life. Dr. Mitchell changed everything. The 3D preview of my new smile made me feel in control. Best decision I ever made.",
     rating: 5,
-    image: "/images/patient_jennifer.png",
+    image: `${prefix}/images/patient_jennifer.png`,
     initials: "JW",
   },
   {
@@ -21,7 +23,7 @@ const testimonials = [
     role: "Implant Patient",
     content: "The guided implant surgery was seamless. I was back to work the next day. The technology here is truly next-level compared to my previous dentist.",
     rating: 5,
-    image: "/images/patient_michael.png",
+    image: `${prefix}/images/patient_michael.png`,
     initials: "MC",
   },
   {
@@ -29,7 +31,7 @@ const testimonials = [
     role: "Whitening Patient",
     content: "Went 6 shades lighter in one session. The results are incredible and natural-looking. Everyone keeps asking where I got my teeth done.",
     rating: 5,
-    image: "/images/patient_amanda.png",
+    image: `${prefix}/images/patient_amanda.png`,
     initials: "AR",
   },
   {
