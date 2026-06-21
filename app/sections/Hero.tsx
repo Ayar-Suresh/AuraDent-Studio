@@ -80,35 +80,17 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            <div className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
-              {"Your Smile, ".split("").map((char, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.2 + i * 0.03 }}
-                >
-                  {char}
-                </motion.span>
-              ))}
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.6, type: "spring", stiffness: 100 }}
-                className="bg-gradient-to-r from-dental-500 to-dental-700 bg-clip-text text-transparent inline-block"
-              >
-                Reimagined
-              </motion.span>
-              <br />
-              <motion.span
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.8 }}
-                className="inline-block"
-              >
-                in 3D
-              </motion.span>
-            </div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.15] mb-6 text-balance font-sans"
+            >
+              Your Smile, <br />
+              <span className="bg-gradient-to-r from-dental-500 to-dental-600 bg-clip-text text-transparent">
+                Reimagined in 3D
+              </span>
+            </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 40 }}
@@ -167,21 +149,46 @@ export default function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative"
+            className="relative w-full h-[450px] lg:h-[520px] max-w-[460px] lg:max-w-[520px] mx-auto flex items-center justify-center"
           >
-            <div className="relative z-10">
+            {/* Floating glass badges */}
+            <motion.div
+              initial={{ y: 0 }}
+              animate={{ y: [-8, 8, -8] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-[8%] left-[2%] z-20 glass gradient-border px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs lg:text-sm font-semibold">98% Success Rate</span>
+            </motion.div>
+
+            <motion.div
+              initial={{ y: 0 }}
+              animate={{ y: [8, -8, 8] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute bottom-[8%] right-[2%] z-20 glass gradient-border px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-dental-500 animate-pulse" />
+              <span className="text-xs lg:text-sm font-semibold">3D Guided Precision</span>
+            </motion.div>
+
+            {/* 3D Canvas */}
+            <div className="relative w-full h-full z-10 pointer-events-auto">
               <Tooth3D />
             </div>
 
-            {/* Decorative ring */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-[400px] h-[400px] lg:w-[500px] lg:h-[500px] rounded-full border border-dental-200/50 dark:border-dental-800/30 animate-pulse-slow" />
+            {/* Concentric decorative background curved rings */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+              <div className="w-[100%] aspect-square rounded-full border border-dashed border-dental-200/40 dark:border-dental-800/20 animate-pulse-slow" />
             </div>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-[300px] h-[300px] lg:w-[400px] lg:h-[400px] rounded-full border border-dental-300/30 dark:border-dental-700/20" />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+              <div className="w-[80%] aspect-square rounded-full border border-dental-200/50 dark:border-dental-800/35" />
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+              <div className="w-[60%] aspect-square rounded-full border border-dental-300/30 dark:border-dental-700/20" />
             </div>
           </motion.div>
         </div>

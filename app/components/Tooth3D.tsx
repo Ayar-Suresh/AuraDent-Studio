@@ -1,19 +1,20 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Float, Sparkles } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-function ToothShape() {
+function ToothShape({ isBrushing }: { isBrushing: boolean }) {
   const meshRef = useRef<THREE.Group>(null);
   const { mouse } = useThree();
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Gentle auto-rotation
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.2;
+      // Rotation speed accelerates when brushing to show active scrubbing
+      const rotationSpeed = isBrushing ? 0.95 : 0.2;
+      meshRef.current.rotation.y = state.clock.elapsedTime * rotationSpeed;
       
       // Interactive mouse follow
       const targetRotationX = (mouse.y * Math.PI) / 6;
@@ -21,6 +22,11 @@ function ToothShape() {
       
       meshRef.current.rotation.x += (targetRotationX - meshRef.current.rotation.x) * 0.08;
       meshRef.current.rotation.z += (targetRotationZ - meshRef.current.rotation.z) * 0.08;
+
+      // Brushing wobble (high frequency haptic vibration feel)
+      const baseScale = 0.55;
+      const wobble = isBrushing ? Math.sin(state.clock.elapsedTime * 32) * 0.035 : 0;
+      meshRef.current.scale.setScalar(baseScale + wobble);
     }
   });
 
@@ -47,7 +53,7 @@ function ToothShape() {
 
       if (y > -0.15) {
         // CROWN SECTION
-        const t_crown = (y + 0.15) / 1.4; // normalized 0 to 1
+        const t_crown = (y + 0.15) / 1.4;
 
         // Squarish molar chewing surface outline
         const squarish = 1.0 + 0.09 * Math.cos(4 * theta);
@@ -117,22 +123,21 @@ function ToothShape() {
   }, []);
 
   return (
-    <Float speed={2.2} rotationIntensity={0.3} floatIntensity={0.6}>
-      <group ref={meshRef} scale={1.85}>
+    <Float speed={isBrushing ? 4.5 : 2.2} rotationIntensity={isBrushing ? 0.8 : 0.3} floatIntensity={isBrushing ? 1.2 : 0.6}>
+      <group ref={meshRef} scale={0.55}>
         <mesh geometry={toothGeometry}>
-          {/* Using native MeshPhysicalMaterial for beautiful glass-enamel rendering */}
-          {/* This is extremely robust and avoids Drei's headless WebGL transmission fallback bugs */}
+          {/* Glass Physical Material - polished and shinier during scrubbing */}
           <meshPhysicalMaterial
             color="#ffffff"
-            roughness={0.06}
+            roughness={isBrushing ? 0.02 : 0.06}
             metalness={0.05}
             clearcoat={1.0}
-            clearcoatRoughness={0.05}
+            clearcoatRoughness={isBrushing ? 0.02 : 0.05}
             transmission={0.65}
             thickness={1.6}
-            ior={1.62} // Index of refraction of enamel
-            sheen={0.4}
-            sheenColor="#e0f2fe"
+            ior={1.62}
+            sheen={isBrushing ? 0.8 : 0.4}
+            sheenColor={isBrushing ? "#ffffff" : "#e0f2fe"}
             specularIntensity={1.0}
             specularColor="#ffffff"
           />
@@ -143,8 +148,29 @@ function ToothShape() {
 }
 
 export default function Tooth3D() {
+  const [isBrushing, setIsBrushing] = useState(false);
+
+  useEffect(() => {
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.button === 2) {
+        setIsBrushing(true);
+      }
+    };
+    const handleMouseUp = (e: MouseEvent) => {
+      if (e.button === 2) {
+        setIsBrushing(false);
+      }
+    };
+    window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
   return (
-    <div className="w-full h-full min-h-[400px] lg:min-h-[500px]">
+    <div className="w-full h-full">
       <Canvas
         camera={{ position: [0, 0, 5.5], fov: 42 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
@@ -157,15 +183,19 @@ export default function Tooth3D() {
         <pointLight position={[0, 4, -4]} intensity={0.6} color="#38bdf8" />
         <pointLight position={[3, -3, 3]} intensity={0.4} color="#7dd3fc" />
         
-        <ToothShape />
+        <ToothShape isBrushing={isBrushing} />
         
-        <Sparkles count={50} scale={7} size={2} speed={0.3} opacity={0.6} color="#38bdf8" />
+        {/* Sparkles simulate soap foam dynamically expanding on brush scrub */}
+        <Sparkles 
+          count={isBrushing ? 160 : 50} 
+          scale={isBrushing ? 5.5 : 7} 
+          size={isBrushing ? 4.2 : 2} 
+          speed={isBrushing ? 1.6 : 0.3} 
+          opacity={isBrushing ? 0.95 : 0.6} 
+          color={isBrushing ? "#ffffff" : "#38bdf8"} 
+        />
         
         <Environment preset="city" />
-        
-        <EffectComposer>
-          <Bloom luminanceThreshold={0.6} mipmapBlur intensity={1.2} />
-        </EffectComposer>
       </Canvas>
     </div>
   );
